@@ -1,9 +1,9 @@
 /*
  *
- * At 11:30 pm , there will be a check for the xml files that have been uploaded or 
+ * At 9:30 pm , there will be a check for the json files that have been uploaded or 
  * files that have not been upladed
  *
- * At 1:00 am, the xml reports will be backed up from xml_upload_directory to 
+ * At 12:30 am, the json reports will be backed up from json_upload_directory to 
  * dashboard_directory
  *
  * Directories are locked during transfer / backup
@@ -32,8 +32,8 @@ int main()
     struct tm backup_time;
     time(&now);  /* get current time; same as: now = time(NULL)  */
     backup_time = *localtime(&now);
-    backup_time.tm_hour = 1; 
-    backup_time.tm_min = 0; 
+    backup_time.tm_hour = 12; 
+    backup_time.tm_min = 30; 
     backup_time.tm_sec = 0;
 
     printf("hi");
@@ -91,7 +91,7 @@ int main()
 	  struct tm check_uploads_time;
 	  time(&now);  /* get current time; same as: now = time(NULL)  */
 	  check_uploads_time = *localtime(&now);
-	  check_uploads_time.tm_hour = 23; 
+	  check_uploads_time.tm_hour = 9; 
 	  check_uploads_time.tm_min = 30; 
 	  check_uploads_time.tm_sec = 0;
 	
@@ -103,7 +103,7 @@ int main()
 		} 
 
 		
-		//countdown to 23:30
+		//countdown to 9:30
 	  	time(&now);
 		double seconds_to_files_check = difftime(now,mktime(&check_uploads_time));
 		//syslog(LOG_INFO, "%.f seconds until check for xml uploads", seconds_to_files_check);
@@ -115,7 +115,7 @@ int main()
 		}
 				
 
-		//countdown to 1:00
+		//countdown to 12:30
 		time(&now);
 		double seconds_to_transfer = difftime(now, mktime(&backup_time));
 		//syslog(LOG_INFO, "%.f seconds until backup", seconds_to_files_check);
