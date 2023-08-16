@@ -1,5 +1,3 @@
-
-
 # Specify the compiler
 CC = gcc
 
@@ -7,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 
 # Source files
-SRC = backup_dashboard.c check_files_uploads.c collect_reports.c daemon.c generate_reports.c \
+SRC = backup_dashboard.c check_file_uploads.c collect_reports.c daemon.c generate_reports.c \
       lock_directories.c sig_handler.c unlock_directories.c update_timer.c
 
 # Object files (derived from source files)
@@ -30,4 +28,3 @@ $(OUTPUT): $(OBJ)
 # Clean up object files and the output executable
 clean:
 	rm -f $(OBJ) $(OUTPUT)
-
