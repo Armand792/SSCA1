@@ -25,6 +25,10 @@ all: $(OUTPUT)
 $(OUTPUT): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(OUTPUT) -lm
 
+# Run the program after compiling
+run: $(OUTPUT)
+	./$(OUTPUT)
+
 # Clean up object files and the output executable
 clean:
 	rm -f $(OBJ) $(OUTPUT)
