@@ -4,6 +4,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
+//something needs to be done here. 
+
 void sig_handler(int sigNum)
 {
 	if (sigNum == SIGINT) {

@@ -6,5 +6,5 @@
 #include <syslog.h>
 
 void generate_reports(void) {
-   
+   // need to generate reporst here. Alan did nothing.
 }

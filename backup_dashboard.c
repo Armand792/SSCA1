@@ -7,5 +7,32 @@
 #include <stdlib.h>
 
 void backup_dashboard(void) {
-    printf("backup code should go here..");
+    //create a backup directory if it doesn't exist
+    //copy the contents of the dashboard directory to the backup directory
+    //log the backup
+    //return
+    pid_t pid;
+    int status;
+
+    pid = fork();
+    if (pid < 0) {
+        syslog(LOG_ERR, "fork failed: %m");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        execl("bin/cp", "cp", "-r", "./dashboard", "./backup", NULL);
+        syslog(LOG_ERR, "execl failed: %m");
+        exit(1);
+    }
+
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status)) {
+        if (WEXITSTATUS(status) == 0) {
+            syslog(LOG_INFO, "Dashboard backed up");
+        } else {
+            syslog(LOG_ERR, "Dashboard not backed up");
+        }
+    }
+    
 }
