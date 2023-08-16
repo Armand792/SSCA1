@@ -36,6 +36,8 @@ int main()
     backup_time.tm_min = 0; 
     backup_time.tm_sec = 0;
 
+    printf("hi");
+
     // Implementation for Singleton Pattern if desired (Only one instance running)
 
     // Create a child process      
