@@ -36,8 +36,6 @@ int main()
     backup_time.tm_min = 30; 
     backup_time.tm_sec = 0;
 
-    printf("hi");
-
     // Implementation for Singleton Pattern if desired (Only one instance running)
 
     // Create a child process      
@@ -102,7 +100,6 @@ int main()
 			syslog(LOG_ERR, "ERROR: daemon.c : SIG_ERR RECEIVED");
 		} 
 
-		
 		//countdown to 9:30
 	  	time(&now);
 		double seconds_to_files_check = difftime(now,mktime(&check_uploads_time));
