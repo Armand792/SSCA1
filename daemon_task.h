@@ -3,6 +3,8 @@
 
 #include <time.h>
 
+extern volatile sig_atomic_t newFilesDetected;
+
 void collect_reports(void);
 
 void backup_dashboard(void);

@@ -24,10 +24,10 @@
 #include <sys/stat.h>
 #include <time.h>
 #include "daemon_task.h"
-#include <signal.h>
 
 int main()
 {
+   volatile sig_atomic_t newFilesDetected = 0;
     time_t now;
     struct tm backup_time;
     time(&now);  /* get current time; same as: now = time(NULL)  */
@@ -96,9 +96,15 @@ int main()
   	  while(1) {
 	  	sleep(1);
 
-		if(signal(SIGINT, sig_handler) == SIG_ERR) {
+      //waiting for check_file_uploads()
+		if(signal(SIGUSR1, sig_handler) == SIG_ERR) {
 			syslog(LOG_ERR, "ERROR: daemon.c : SIG_ERR RECEIVED");
 		} 
+
+      if(signal(SIGINT, sig_handler) == SIG_ERR) {
+			syslog(LOG_ERR, "ERROR: daemon.c : SIG_ERR RECEIVED");
+		} 
+
 
 		//countdown to 9:30
 	  	time(&now);
@@ -106,7 +112,6 @@ int main()
 		//syslog(LOG_INFO, "%.f seconds until check for xml uploads", seconds_to_files_check);
 		if(seconds_to_files_check == 0) {
 			check_file_uploads();
-
 			//change to tommorow's day
 			update_timer(&check_uploads_time);
 		}
@@ -117,8 +122,11 @@ int main()
 		double seconds_to_transfer = difftime(now, mktime(&backup_time));
 		//syslog(LOG_INFO, "%.f seconds until backup", seconds_to_files_check);
 		if(seconds_to_transfer == 0) {
-			lock_directories();
-			collect_reports();	  
+			lock_directories();  
+         if (newFilesDetected == 1) {
+            collect_reports();
+            newFilesDetected = 0; // Reset the variable after collecting reports
+            }
 			backup_dashboard();
 			sleep(30);
 			unlock_directories();

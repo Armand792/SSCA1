@@ -15,6 +15,8 @@ void sig_handler(int sigNum)
 		backup_dashboard();
 		sleep(30);
 		unlock_directories();	
+	}else if (sigNum == SIGUSR1) {
+		syslog(LOG_INFO, "Received signal from check_file_uploads indicating new files ");
+		newFilesDetected = 1;
 	}
-
 }
