@@ -84,7 +84,8 @@ int main() {
 
             // Close the named pipe and the file
             close(pipe_fd);
-            close(file_fd);
+            close(file_fd);}
+        }
 
 
       struct tm check_uploads_time;
@@ -127,9 +128,6 @@ int main() {
 			//after actions are finished, start counting to next day
 			update_timer(&backup_time);
 		}	
-            
         }
-    }
-    
     return 0;
 }
