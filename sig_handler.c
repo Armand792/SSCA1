@@ -9,14 +9,15 @@
 void sig_handler(int sigNum)
 {
 	if (sigNum == SIGINT) {
+		openlog("SIGNAL", LOG_PID, LOG_USER);
 		syslog(LOG_INFO, "RECEIVED SIGNAL INTERRUPT, INITIATING BACKUP AND TRANSFER");
+		closelog();
 		lock_directories();
 		collect_reports();
 		backup_dashboard();
 		sleep(30);
-		unlock_directories();	
-	}else if (sigNum == SIGUSR1) {
-		syslog(LOG_INFO, "Received signal from check_file_uploads indicating new files ");
-		newFilesDetected = 1;
+		unlock_directories();
+		kill(0, SIGTERM);
+        
 	}
 }

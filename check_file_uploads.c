@@ -6,58 +6,29 @@
 #include <pwd.h>  
 #include <errno.h>
 #include <string.h>
+#include <fcntl.h>  
+#include <stdlib.h>
 
 
 //Identify new or modified json reports and log details of who made the changes, 
 //this should be generated as a text file report and stored on the server.
 
-const char *jsonFiles[] = {
-    "./shared/warehouse.json",
-    "./shared/Manufacturing.json",
-    "./shared/Marketing.json",
-    "./shared/Hr.json",
-    "./shared/Sales.json",
-};
-
-// void log_change(const char *filename, const char *changeType, const char *username) {
-//     FILE *logFile = fopen("change_log.txt", "a"); // Open in append mode
-//     if (logFile != NULL) {
-//         time_t currentTime = time(NULL);
-//         struct tm *timeInfo = localtime(&currentTime);
-//         fprintf(logFile, "File: %s, Change Type: %s, Username: %s, Timestamp: %04d-%02d-%02d %02d:%02d:%02d\n",
-//                 filename, changeType, username,
-//                 timeInfo->tm_year + 1900, timeInfo->tm_mon + 1, timeInfo->tm_mday,
-//                 timeInfo->tm_hour, timeInfo->tm_min, timeInfo->tm_sec);
-//         fclose(logFile);
-//     }
-// }
 
 void check_file_uploads(void) {
+    char *argv[] = { "/bin/sh", "-c", "ls -al /workspaces/SSCA1/shared/*.json | awk '{print $9, $3, $4, $6, $7}' | tail -n +2", NULL };
 
-   // Calculate time thresholds (e.g., within last 24 hours)
-   time_t currentTime = time(NULL);
-   time_t modifiedThreshold = currentTime - 24 * 60 * 60; // 24 hours ago
-   time_t createdThreshold = currentTime - 2 * 24 * 60 * 60; // 48 hours ago new file
+    // Open the named pipe in write mode
+    int pipe_fd = open("/tmp/output_fifo", O_WRONLY);
+    if (pipe_fd == -1) {
+        perror("Failed to open the named pipe for writing");
+        exit(EXIT_FAILURE);
+    }
 
-   //loop to reiterate to each json file in directory 
-   for (size_t i = 0; i < sizeof(jsonFiles) / sizeof(jsonFiles[0]); i++){
-        
-      //Open each Json file
-      FILE *file = fopen(jsonFiles[i], "r");
-        
-      if (file != NULL) {
-         //use predefined strucutre stat to check timestamp in files
-         struct stat fileStat;
-         //check if the info from the Json file was retrieve into the struc, 0 is YES.
-         if (stat(jsonFiles[i], &fileStat) == 0) {
-               if (fileStat.st_mtime >= modifiedThreshold) {
-                  syslog(LOG_INFO, "JSON file %s was modified", jsonFiles[i]);
-                  kill(daemon_pid, SIGUSR1);
-               }
-         }
-      }
-   }
-   return;
+    // Redirect stdout to the named pipe
+    dup2(pipe_fd, fileno(stdout));
+    close(pipe_fd);
+
+    execv("/bin/sh", argv);
 }
 
 
