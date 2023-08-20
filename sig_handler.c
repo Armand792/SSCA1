@@ -17,7 +17,5 @@ void sig_handler(int sigNum)
 		backup_dashboard();
 		sleep(30);
 		unlock_directories();
-		kill(0, SIGTERM);
-        
 	}
 }

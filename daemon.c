@@ -11,12 +11,7 @@
 
 int main() {
 
-    // Create a named pipe (FIFO)
-    if (mkfifo("/tmp/output_fifo", 0666) == -1) {
-        perror("Failed to create named pipe");
-        exit(EXIT_FAILURE);
-    }
-
+    openlog("daemon", LOG_PID, LOG_USER);
     time_t now;
     struct tm backup_time;
     time(&now);  /* get current time; same as: now = time(NULL)  */
@@ -59,18 +54,17 @@ int main() {
              {
                close (x);
              } 
-            
-                // Open the named pipe in read mode
-            int pipe_fd = open("/tmp/output_fifo", O_RDONLY);
-            if (pipe_fd == -1) {
-                perror("Failed to open the named pipe for reading");
+
+            // Create a named pipe (FIFO)
+            if (mkfifo("/tmp/reporting_fifo", 0666) == -1) {
+                syslog(LOG_ERR, "Failed to create the named pipe");
                 exit(EXIT_FAILURE);
             }
 
-            // Open a text file for writing
-            int file_fd = open("/tmp/output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-            if (file_fd == -1) {
-                perror("Failed to open the file for writing");
+            // Open the named pipe in read mode
+            int pipe_fd = open("/tmp/reporting_fifo", O_RDONLY);
+            if (pipe_fd == -1) {
+                syslog(LOG_ERR, "Failed to open the named pipe");
                 exit(EXIT_FAILURE);
             }
 
@@ -82,9 +76,6 @@ int main() {
                 write(file_fd, buffer, bytes_read);
             }
 
-            // Close the named pipe and the file
-            close(pipe_fd);
-            close(file_fd);}
         }
 
 
@@ -104,7 +95,7 @@ int main() {
 		} 
 
 		
-		//countdown to 12:30
+		//countdown to 9:30
 	  	time(&now);
 		double seconds_to_files_check = difftime(now,mktime(&check_uploads_time));
 		syslog(LOG_INFO, "%.f seconds until check for jml uploads", seconds_to_files_check);
@@ -114,7 +105,7 @@ int main() {
 			update_timer(&check_uploads_time);
 		}
         
-        //countdown to 1:00
+        //countdown to 12:30
 		time(&now);
 		double seconds_to_transfer = difftime(now, mktime(&backup_time));
 		//syslog(LOG_INFO, "%.f seconds until backup", seconds_to_files_check);
@@ -124,10 +115,13 @@ int main() {
 			backup_dashboard();
 			sleep(30);
 			unlock_directories();
-			generate_reports();
 			//after actions are finished, start counting to next day
 			update_timer(&backup_time);
 		}	
-        }
+    }
+
+    // Close the file descriptors
+    close(pipe_fd);
+    closelog();
     return 0;
 }
