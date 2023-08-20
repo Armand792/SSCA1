@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 
 # Source files
-SRC = backup_dashboard.c check_file_uploads.c collect_reports.c daemon.c generate_reports.c \
+SRC = backup_dashboard.c check_file_uploads.c collect_reports.c daemon.c \
       lock_directories.c sig_handler.c unlock_directories.c update_timer.c
 
 # Object files (derived from source files)

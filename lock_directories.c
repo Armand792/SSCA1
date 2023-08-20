@@ -6,6 +6,8 @@
 #include <syslog.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>  
+#include <string.h>
 
 void lock_directories() {
     //printf("lock directory functionality should go here. fork/chmod will be used here to change permissions");

@@ -4,6 +4,8 @@
 #include <sys/wait.h>
 #include <syslog.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <string.h>
 
 void collect_reports(void) {
     //collect the reports from the shared directory

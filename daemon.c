@@ -72,10 +72,19 @@ int main() {
             char buffer[1024]; // Adjust the buffer size as needed
             ssize_t bytes_read;
 
-            while ((bytes_read = read(pipe_fd, buffer, sizeof(buffer))) > 0) {
-                write(file_fd, buffer, bytes_read);
+            // Open or create a text file for writing
+            FILE *output_file = fopen("/workspaces/SSCA1/dashboard/reports.txt", "a");
+            if (output_file == NULL) {
+                syslog(LOG_ERR, "Failed to open the file for writing %m");
+                exit(EXIT_FAILURE);
             }
 
+            while ((bytes_read = read(pipe_fd, buffer, sizeof(buffer))) > 0) {
+                fprintf(output_file, "%s", buffer);
+            }
+
+            fclose(output_file);
+            close(pipe_fd);
         }
 
 
@@ -118,10 +127,9 @@ int main() {
 			//after actions are finished, start counting to next day
 			update_timer(&backup_time);
 		}	
+      }
     }
-
     // Close the file descriptors
-    close(pipe_fd);
     closelog();
     return 0;
 }

@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <string.h> 
+#include <fcntl.h>
 
 void backup_dashboard(void) {
     //create a backup directory if it doesn't exist
